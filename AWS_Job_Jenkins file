@@ -1,0 +1,20 @@
+pipeline {
+    agent { label "ubunto_slav01" }
+    environment {
+        AWS_DEFAULT_REGION="us-east-1"
+    }    
+    stages {
+        stage('Example Build') {
+            steps {
+                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'yoni_lee_aws-creds', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                   echo "you choose option to put ${CHOICE} instance"
+                   sh '''
+                     aws --version
+                     aws ec2 describe-instances
+                     aws ec2 run-instances --image-id ami-0e472ba40eb589f49 --count ${CHOICE} --instance-type t2.micro
+                   '''                
+                }
+            }
+        }
+    }
+}
